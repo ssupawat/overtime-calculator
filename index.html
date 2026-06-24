@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#171717">
+<link rel="manifest" href="/manifest.json">
+<title>OT Calculator</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #fafafa;
+  color: #171717;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.row:last-child { margin-bottom: 0; }
+
+.label-group { display: flex; flex-direction: column; gap: 2px; }
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rate {
+  font-size: 12px;
+  color: #888;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input {
+  width: 64px;
+  height: 44px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:focus { border-color: #171717; }
+
+.btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #171717;
+  transition: background 0.1s;
+}
+
+.btn:active { background: #ebebeb; }
+
+.subtotal {
+  font-size: 14px;
+  color: #888;
+  min-width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.divider {
+  height: 1px;
+  background: #ebebeb;
+  margin: 12px 0;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.total-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown {
+  width: 100%;
+  max-width: 380px;
+  font-size: 13px;
+  color: #888;
+  margin-top: -4px;
+  margin-bottom: 16px;
+  padding: 0 4px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.reset-btn {
+  width: 100%;
+  max-width: 380px;
+  height: 44px;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #171717;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.reset-btn:active { background: #ebebeb; }
+</style>
+</head>
+<body>
+
+<h1>OT Calculator</h1>
+
+<div class="card">
+  <div class="row">
+    <div class="label-group">
+      <span class="label">BD</span>
+      <span class="rate">475 ฿/day (until 8pm)</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('bd', -1)">−</button>
+      <input id="bd" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('bd', 1)">+</button>
+    </div>
+    <span class="subtotal" id="bd-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">OT</span>
+      <span class="rate">105 ฿/hour</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('ot', -1)">−</button>
+      <input id="ot" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('ot', 1)">+</button>
+    </div>
+    <span class="subtotal" id="ot-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="total-row">
+    <span class="total-label">Total</span>
+    <span class="total-value" id="total">0 ฿</span>
+  </div>
+</div>
+
+<div class="breakdown" id="breakdown"></div>
+
+<button class="reset-btn" onclick="reset()">Reset</button>
+
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+
+const BD_RATE = 475;
+const OT_RATE = 105;
+
+function val(id) { return Math.max(0, parseInt(document.getElementById(id).value) || 0); }
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+
+function change(id, d) {
+  const el = document.getElementById(id);
+  el.value = Math.max(0, val(id) + d);
+  calc();
+}
+
+function calc() {
+  const bd = val('bd');
+  const ot = val('ot');
+  localStorage.setItem('ot-calc-bd', bd);
+  localStorage.setItem('ot-calc-ot', ot);
+  const bdTotal = bd * BD_RATE;
+  const otTotal = ot * OT_RATE;
+  const total = bdTotal + otTotal;
+
+  document.getElementById('bd-sub').textContent = fmt(bdTotal) + ' ฿';
+  document.getElementById('ot-sub').textContent = fmt(otTotal) + ' ฿';
+  document.getElementById('total').textContent = fmt(total) + ' ฿';
+
+  let lines = [];
+  if (bd) lines.push(`${fmt(bd)} × ${fmt(BD_RATE)} = ${fmt(bdTotal)} ฿`);
+  if (ot) lines.push(`${fmt(ot)} × ${fmt(OT_RATE)} = ${fmt(otTotal)} ฿`);
+  if (bd && ot) lines.push(`${fmt(bdTotal)} + ${fmt(otTotal)} = ${fmt(total)} ฿`);
+  document.getElementById('breakdown').innerHTML = lines.join('<br>');
+}
+
+function reset() {
+  document.getElementById('bd').value = 0;
+  document.getElementById('ot').value = 0;
+  calc();
+}
+
+// restore saved values
+const savedBd = localStorage.getItem('ot-calc-bd');
+const savedOt = localStorage.getItem('ot-calc-ot');
+if (savedBd !== null) document.getElementById('bd').value = savedBd;
+if (savedOt !== null) document.getElementById('ot').value = savedOt;
+calc();
+</script>
+
+</body>
+</html>
