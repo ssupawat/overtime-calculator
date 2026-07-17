@@ -2,7 +2,7 @@
   "name": "OT Calculator",
   "short_name": "OT Calc",
   "description": "Overtime wage calculator",
-  "start_url": "/",
+  "start_url": "/overtime-calculator",
   "display": "standalone",
   "background_color": "#fafafa",
   "theme_color": "#171717",
