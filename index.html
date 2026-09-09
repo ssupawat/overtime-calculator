@@ -9,6 +9,19 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="icon" type="image/png" href="icon-192.png"> 
 <title>OT Calculator</title>
+<meta name="description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<link rel="canonical" href="https://ssupawat.github.io/overtime-calculator/">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="art.">
+<meta property="og:url" content="https://ssupawat.github.io/overtime-calculator/">
+<meta property="og:title" content="OT Calculator">
+<meta property="og:description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<meta property="og:image" content="https://ssupawat.github.io/overtime-calculator/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OT Calculator">
+<meta name="twitter:description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<meta name="twitter:image" content="https://ssupawat.github.io/overtime-calculator/icon-512.png">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -23,6 +36,18 @@ body {
   padding: 24px 16px;
   -webkit-font-smoothing: antialiased;
 }
+
+.site-link {
+  margin-top: 28px;
+  font-size: 12px;
+}
+
+.site-link a {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.site-link a:hover { color: #171717; }
 
 h1 {
   font-size: 20px;
@@ -214,6 +239,7 @@ input:focus { border-color: #171717; }
 <div class="breakdown" id="breakdown"></div>
 
 <button class="reset-btn" onclick="reset()">Reset</button>
+<footer class="site-link"><a href="https://ssupawat.github.io/">← art.</a></footer>
 
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
