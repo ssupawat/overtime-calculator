@@ -219,8 +219,23 @@ input:focus { border-color: #171717; }
 
   <div class="row">
     <div class="label-group">
-      <span class="label">One Day (8hr)</span>
-      <span class="rate">750 ฿/day</span>
+      <span class="label">OT</span>
+      <span class="rate">105 ฿/hour</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('ot', -1)">−</button>
+      <input id="ot" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('ot', 1)">+</button>
+    </div>
+    <span class="subtotal" id="ot-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">One Day</span>
+      <span class="rate">8hr · 750 ฿/day</span>
     </div>
     <div class="input-group">
       <button class="btn" onclick="change('day', -1)">−</button>
@@ -234,8 +249,8 @@ input:focus { border-color: #171717; }
 
   <div class="row">
     <div class="label-group">
-      <span class="label">Half Day (4hr)</span>
-      <span class="rate">425 ฿/day</span>
+      <span class="label">Half Day</span>
+      <span class="rate">4hr · 425 ฿/day</span>
     </div>
     <div class="input-group">
       <button class="btn" onclick="change('half', -1)">−</button>
@@ -243,21 +258,6 @@ input:focus { border-color: #171717; }
       <button class="btn" onclick="change('half', 1)">+</button>
     </div>
     <span class="subtotal" id="half-sub">0 ฿</span>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="row">
-    <div class="label-group">
-      <span class="label">OT</span>
-      <span class="rate">105 ฿/hour</span>
-    </div>
-    <div class="input-group">
-      <button class="btn" onclick="change('ot', -1)">−</button>
-      <input id="ot" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
-      <button class="btn" onclick="change('ot', 1)">+</button>
-    </div>
-    <span class="subtotal" id="ot-sub">0 ฿</span>
   </div>
 
   <div class="divider"></div>
@@ -278,9 +278,9 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 const ITEMS = [
   { id: 'bd',   rate: 475 },
+  { id: 'ot',   rate: 105 },
   { id: 'day',  rate: 750 },
   { id: 'half', rate: 425 },
-  { id: 'ot',   rate: 105 },
 ];
 
 function val(id) { return Math.max(0, parseInt(document.getElementById(id).value) || 0); }
