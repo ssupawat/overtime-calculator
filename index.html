@@ -217,6 +217,36 @@ input:focus { border-color: #171717; }
 
   <div class="row">
     <div class="label-group">
+      <span class="label">One Day (8hr)</span>
+      <span class="rate">750 ฿/day</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('day', -1)">−</button>
+      <input id="day" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('day', 1)">+</button>
+    </div>
+    <span class="subtotal" id="day-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">Half Day (4hr)</span>
+      <span class="rate">425 ฿/day</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('half', -1)">−</button>
+      <input id="half" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('half', 1)">+</button>
+    </div>
+    <span class="subtotal" id="half-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
       <span class="label">OT</span>
       <span class="rate">105 ฿/hour</span>
     </div>
@@ -244,8 +274,12 @@ input:focus { border-color: #171717; }
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-const BD_RATE = 475;
-const OT_RATE = 105;
+const ITEMS = [
+  { id: 'bd',   rate: 475 },
+  { id: 'day',  rate: 750 },
+  { id: 'half', rate: 425 },
+  { id: 'ot',   rate: 105 },
+];
 
 function val(id) { return Math.max(0, parseInt(document.getElementById(id).value) || 0); }
 
@@ -258,36 +292,35 @@ function change(id, d) {
 }
 
 function calc() {
-  const bd = val('bd');
-  const ot = val('ot');
-  localStorage.setItem('ot-calc-bd', bd);
-  localStorage.setItem('ot-calc-ot', ot);
-  const bdTotal = bd * BD_RATE;
-  const otTotal = ot * OT_RATE;
-  const total = bdTotal + otTotal;
-
-  document.getElementById('bd-sub').textContent = fmt(bdTotal) + ' ฿';
-  document.getElementById('ot-sub').textContent = fmt(otTotal) + ' ฿';
+  let total = 0;
+  const lines = [];
+  const totals = [];
+  for (const { id, rate } of ITEMS) {
+    const n = val(id);
+    localStorage.setItem('ot-calc-' + id, n);
+    const sub = n * rate;
+    total += sub;
+    document.getElementById(id + '-sub').textContent = fmt(sub) + ' ฿';
+    if (n) {
+      lines.push(`${fmt(n)} × ${fmt(rate)} = ${fmt(sub)} ฿`);
+      totals.push(sub);
+    }
+  }
   document.getElementById('total').textContent = fmt(total) + ' ฿';
-
-  let lines = [];
-  if (bd) lines.push(`${fmt(bd)} × ${fmt(BD_RATE)} = ${fmt(bdTotal)} ฿`);
-  if (ot) lines.push(`${fmt(ot)} × ${fmt(OT_RATE)} = ${fmt(otTotal)} ฿`);
-  if (bd && ot) lines.push(`${fmt(bdTotal)} + ${fmt(otTotal)} = ${fmt(total)} ฿`);
+  if (totals.length > 1) lines.push(`${totals.map(fmt).join(' + ')} = ${fmt(total)} ฿`);
   document.getElementById('breakdown').innerHTML = lines.join('<br>');
 }
 
 function reset() {
-  document.getElementById('bd').value = 0;
-  document.getElementById('ot').value = 0;
+  ITEMS.forEach(({ id }) => document.getElementById(id).value = 0);
   calc();
 }
 
 // restore saved values
-const savedBd = localStorage.getItem('ot-calc-bd');
-const savedOt = localStorage.getItem('ot-calc-ot');
-if (savedBd !== null) document.getElementById('bd').value = savedBd;
-if (savedOt !== null) document.getElementById('ot').value = savedOt;
+ITEMS.forEach(({ id }) => {
+  const saved = localStorage.getItem('ot-calc-' + id);
+  if (saved !== null) document.getElementById(id).value = saved;
+});
 calc();
 </script>
 
