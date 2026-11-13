@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#171717">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" href="icon-192.png"> 
+<title>OT Calculator – ผู้ช่วยพยาบาล</title>
+<meta name="description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<link rel="canonical" href="https://ssupawat.github.io/overtime-calculator/assistant.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="art.">
+<meta property="og:url" content="https://ssupawat.github.io/overtime-calculator/assistant.html">
+<meta property="og:title" content="OT Calculator – ผู้ช่วยพยาบาล">
+<meta property="og:description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<meta property="og:image" content="https://ssupawat.github.io/overtime-calculator/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OT Calculator – ผู้ช่วยพยาบาล">
+<meta name="twitter:description" content="Overtime wage calculator: enter BD days and OT hours, get the total instantly. Works offline as a PWA.">
+<meta name="twitter:image" content="https://ssupawat.github.io/overtime-calculator/icon-512.png">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #fafafa;
+  color: #171717;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.site-link {
+  margin-top: 28px;
+  font-size: 12px;
+}
+
+.site-link a {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.site-link a:hover { color: #171717; }
+
+h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.row:last-child { margin-bottom: 0; }
+
+.label-group { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rate {
+  font-size: 12px;
+  color: #888;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+input {
+  width: 64px;
+  height: 44px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fafafa;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:focus { border-color: #171717; }
+
+.btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #171717;
+  transition: background 0.1s;
+}
+
+.btn:active { background: #ebebeb; }
+
+.subtotal {
+  font-size: 14px;
+  color: #888;
+  width: 72px;
+  flex: none;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.divider {
+  height: 1px;
+  background: #ebebeb;
+  margin: 12px 0;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.total-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown {
+  width: 100%;
+  max-width: 380px;
+  font-size: 13px;
+  color: #888;
+  margin-top: -4px;
+  margin-bottom: 16px;
+  padding: 0 4px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.reset-btn {
+  width: 100%;
+  max-width: 380px;
+  height: 44px;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #171717;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.reset-btn:active { background: #ebebeb; }
+
+.switch {
+  display: flex;
+  width: 100%;
+  max-width: 380px;
+  background: #ebebeb;
+  border-radius: 10px;
+  padding: 3px;
+  margin: -12px 0 20px;
+}
+
+.switch a {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.switch a.active {
+  background: #fff;
+  color: #171717;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+</style>
+</head>
+<body>
+
+<h1>OT Calculator <small style="font-size:11px;font-weight:400;color:#bbb">v1.0.0</small></h1>
+
+<nav class="switch">
+  <a href="./">พยาบาล</a>
+  <a href="assistant.html" class="active">ผู้ช่วยพยาบาล</a>
+</nav>
+
+<div class="card">
+  <div class="row">
+    <div class="label-group">
+      <span class="label">BD</span>
+      <span class="rate">350 ฿/day<br>(until 8pm)</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('bd', -1)">−</button>
+      <input id="bd" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('bd', 1)">+</button>
+    </div>
+    <span class="subtotal" id="bd-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">OT</span>
+      <span class="rate">80 ฿/hour</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('ot', -1)">−</button>
+      <input id="ot" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('ot', 1)">+</button>
+    </div>
+    <span class="subtotal" id="ot-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">One Day</span>
+      <span class="rate">8hr · 550 ฿/day</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('day', -1)">−</button>
+      <input id="day" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('day', 1)">+</button>
+    </div>
+    <span class="subtotal" id="day-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="row">
+    <div class="label-group">
+      <span class="label">Half Day</span>
+      <span class="rate">4hr · 325 ฿/day</span>
+    </div>
+    <div class="input-group">
+      <button class="btn" onclick="change('half', -1)">−</button>
+      <input id="half" type="number" inputmode="numeric" value="0" min="0" oninput="calc()">
+      <button class="btn" onclick="change('half', 1)">+</button>
+    </div>
+    <span class="subtotal" id="half-sub">0 ฿</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="total-row">
+    <span class="total-label">Total</span>
+    <span class="total-value" id="total">0 ฿</span>
+  </div>
+</div>
+
+<div class="breakdown" id="breakdown"></div>
+
+<button class="reset-btn" onclick="reset()">Reset</button>
+<footer class="site-link"><a href="https://ssupawat.github.io/">← art.</a></footer>
+
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+const ITEMS = [
+  { id: 'bd',   rate: 350 },
+  { id: 'ot',   rate: 80 },
+  { id: 'day',  rate: 550 },
+  { id: 'half', rate: 325 },
+];
+
+function val(id) { return Math.max(0, parseInt(document.getElementById(id).value) || 0); }
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+
+function change(id, d) {
+  const el = document.getElementById(id);
+  el.value = Math.max(0, val(id) + d);
+  calc();
+}
+
+function calc() {
+  let total = 0;
+  const lines = [];
+  const totals = [];
+  for (const { id, rate } of ITEMS) {
+    const n = val(id);
+    localStorage.setItem('ot-calc-assistant-' + id, n);
+    const sub = n * rate;
+    total += sub;
+    document.getElementById(id + '-sub').textContent = fmt(sub) + ' ฿';
+    if (n) {
+      lines.push(`${fmt(n)} × ${fmt(rate)} = ${fmt(sub)} ฿`);
+      totals.push(sub);
+    }
+  }
+  document.getElementById('total').textContent = fmt(total) + ' ฿';
+  if (totals.length > 1) lines.push(`${totals.map(fmt).join(' + ')} = ${fmt(total)} ฿`);
+  document.getElementById('breakdown').innerHTML = lines.join('<br>');
+}
+
+function reset() {
+  ITEMS.forEach(({ id }) => document.getElementById(id).value = 0);
+  calc();
+}
+
+// restore saved values
+ITEMS.forEach(({ id }) => {
+  const saved = localStorage.getItem('ot-calc-assistant-' + id);
+  if (saved !== null) document.getElementById(id).value = saved;
+});
+calc();
+</script>
+
+</body>
+</html>
