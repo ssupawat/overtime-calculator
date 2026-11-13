@@ -74,7 +74,7 @@ h1 {
 }
 .row:last-child { margin-bottom: 0; }
 
-.label-group { display: flex; flex-direction: column; gap: 2px; }
+.label-group { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 
 .label {
   font-size: 15px;
@@ -91,6 +91,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: none;
 }
 
 input {
@@ -136,7 +137,8 @@ input:focus { border-color: #171717; }
 .subtotal {
   font-size: 14px;
   color: #888;
-  min-width: 90px;
+  width: 72px;
+  flex: none;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -203,7 +205,7 @@ input:focus { border-color: #171717; }
   <div class="row">
     <div class="label-group">
       <span class="label">BD</span>
-      <span class="rate">475 ฿/day (until 8pm)</span>
+      <span class="rate">475 ฿/day<br>(until 8pm)</span>
     </div>
     <div class="input-group">
       <button class="btn" onclick="change('bd', -1)">−</button>
